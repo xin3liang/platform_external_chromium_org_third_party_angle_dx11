@@ -41,9 +41,10 @@
 //
 class TSymbol {    
 public:
-    POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator)
+    POOL_ALLOCATOR_NEW_DELETE();
     TSymbol(const TString *n) :  name(n) { }
     virtual ~TSymbol() { /* don't delete name, it's from the pool */ }
+
     const TString& getName() const { return *name; }
     virtual const TString& getMangledName() const { return getName(); }
     virtual bool isFunction() const { return false; }
@@ -186,19 +187,24 @@ public:
     typedef const tLevel::value_type tLevelPair;
     typedef std::pair<tLevel::iterator, bool> tInsertResult;
 
-    POOL_ALLOCATOR_NEW_DELETE(GlobalPoolAllocator)
+    POOL_ALLOCATOR_NEW_DELETE();
     TSymbolTableLevel() { }
     ~TSymbolTableLevel();
 
-    bool insert(TSymbol& symbol) 
+    bool insert(const TString &name, TSymbol &symbol)
     {
         //
         // returning true means symbol was added to the table
         //
         tInsertResult result;
-        result = level.insert(tLevelPair(symbol.getMangledName(), &symbol));
+        result = level.insert(tLevelPair(name, &symbol));
 
         return result.second;
+    }
+
+    bool insert(TSymbol &symbol)
+    {
+        return insert(symbol.getMangledName(), symbol);
     }
 
     TSymbol* find(const TString& name) const
@@ -280,22 +286,22 @@ public:
         return insert(*constant);
     }
 
-    bool insertBuiltIn(TType *rvalue, const char *name, TType *ptype1, const char *pname1, TType *ptype2 = 0, const char *pname2 = 0, TType *ptype3 = 0, const char *pname3 = 0)
+    bool insertBuiltIn(TType *rvalue, const char *name, TType *ptype1, TType *ptype2 = 0, TType *ptype3 = 0)
     {
         TFunction *function = new TFunction(NewPoolTString(name), *rvalue);
 
-        TParameter param1 = {NewPoolTString(pname1), ptype1};
+        TParameter param1 = {NULL, ptype1};
         function->addParameter(param1);
 
-        if (pname2)
+        if(ptype2)
         {
-            TParameter param2 = {NewPoolTString(pname2), ptype2};
+            TParameter param2 = {NULL, ptype2};
             function->addParameter(param2);
         }
 
-        if (pname3)
+        if(ptype3)
         {
-            TParameter param3 = {NewPoolTString(pname3), ptype3};
+            TParameter param3 = {NULL, ptype3};
             function->addParameter(param3);
         }
 

@@ -125,7 +125,7 @@ bool TCompiler::compile(const char* const shaderStrings[],
                                shaderType, shaderSpec, compileOptions, true,
                                sourcePath, infoSink);
     parseContext.fragmentPrecisionHigh = fragmentPrecisionHigh;
-    GlobalParseContext = &parseContext;
+    SetGlobalParseContext(&parseContext);
 
     // We preserve symbols at the built-in level from compile-to-compile.
     // Start pushing the user-defined symbols at global level.
@@ -237,7 +237,7 @@ bool TCompiler::InitBuiltInSymbolTable(const ShBuiltInResources &resources)
       default: assert(false && "Language not supported");
     }
 
-    InsertBuiltInFunctions(shaderType, shaderSpec, resources, extensionBehavior, symbolTable);
+    InsertBuiltInFunctions(shaderType, shaderSpec, resources, symbolTable);
 
     IdentifyBuiltIns(shaderType, shaderSpec, resources, symbolTable);
 
