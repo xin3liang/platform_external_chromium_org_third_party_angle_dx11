@@ -892,6 +892,19 @@ bool TParseContext::supportsExtension(const char* extension)
     return (iter != extbehavior.end());
 }
 
+bool TParseContext::isExtensionEnabled(const char* extension) const
+{
+    const TExtensionBehavior& extbehavior = extensionBehavior();
+    TExtensionBehavior::const_iterator iter = extbehavior.find(extension);
+
+    if (iter == extbehavior.end())
+    {
+        return false;
+    }
+
+    return (iter->second == EBhEnable || iter->second == EBhRequire);
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 //
 // Non-Errors.
@@ -907,8 +920,9 @@ const TFunction* TParseContext::findFunction(const TSourceLoc& line, TFunction* 
 {
     // First find by unmangled name to check whether the function name has been
     // hidden by a variable name or struct typename.
+    // If a function is found, check for one with a matching argument list.
     const TSymbol* symbol = symbolTable.find(call->getName(), builtIn);
-    if (symbol == 0) {
+    if (symbol == 0 || symbol->isFunction()) {
         symbol = symbolTable.find(call->getMangledName(), builtIn);
     }
 
@@ -923,27 +937,6 @@ const TFunction* TParseContext::findFunction(const TSourceLoc& line, TFunction* 
     }
 
     return static_cast<const TFunction*>(symbol);
-}
-
-bool TParseContext::isVariableBuiltIn(const TVariable* var)
-{
-    bool builtIn = false;
-    // First find by unmangled name to check whether the function name has been
-    // hidden by a variable name or struct typename.
-    const TSymbol* symbol = symbolTable.find(var->getName(), &builtIn);
-    if (symbol == 0) {
-        symbol = symbolTable.find(var->getMangledName(), &builtIn);
-    }
-
-    if (symbol == 0) {
-        return false;
-    }
-
-    if (!symbol->isVariable()) {
-        return false;
-    }
-
-    return builtIn;
 }
 
 //
@@ -1512,6 +1505,12 @@ TIntermTyped* TParseContext::addIndexExpression(TIntermTyped *baseExpression, co
                     error(location, "", "[", extraInfo.c_str());
                     recover();
                     index = baseExpression->getType().getArraySize() - 1;
+                }
+                else if (baseExpression->getQualifier() == EvqFragData && index > 0 && !isExtensionEnabled("GL_EXT_draw_buffers"))
+                {
+                    error(location, "", "[", "array indexes for gl_FragData must be zero when GL_EXT_draw_buffers is disabled");
+                    recover();
+                    index = 0;
                 }
             }
             else if ((baseExpression->isVector() || baseExpression->isMatrix()) && baseExpression->getType().getNominalSize() <= index)
