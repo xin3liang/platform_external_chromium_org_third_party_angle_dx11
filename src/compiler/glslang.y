@@ -51,6 +51,7 @@ WHICH GENERATES THE GLSL ES PARSER (glslang_tab.cpp AND glslang_tab.h).
 %code requires {
 #define YYLTYPE TSourceLoc
 #define YYLTYPE_IS_DECLARED 1
+#define SH_MAX_TOKEN_LENGTH 256  // WebGL spec.
 }
 
 %union {
@@ -85,7 +86,7 @@ WHICH GENERATES THE GLSL ES PARSER (glslang_tab.cpp AND glslang_tab.h).
 
 %{
 extern int yylex(YYSTYPE* yylval, YYLTYPE* yylloc, void* yyscanner);
-static void yyerror(YYLTYPE* yylloc, TParseContext* context, const char* reason);
+extern void yyerror(YYLTYPE* yylloc, TParseContext* context, const char* reason);
 
 #define YYLLOC_DEFAULT(Current, Rhs, N)                      \
   do {                                                       \
@@ -2003,11 +2004,6 @@ function_definition
     ;
 
 %%
-
-void yyerror(YYLTYPE* yylloc, TParseContext* context, const char* reason) {
-    context->error(*yylloc, reason, "");
-    context->recover();
-}
 
 int glslang_parse(TParseContext* context) {
     return yyparse(context);
