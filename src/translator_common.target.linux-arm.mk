@@ -34,6 +34,7 @@ LOCAL_SRC_FILES := \
 	third_party/angle_dx11/src/compiler/InfoSink.cpp \
 	third_party/angle_dx11/src/compiler/Initialize.cpp \
 	third_party/angle_dx11/src/compiler/InitializeDll.cpp \
+	third_party/angle_dx11/src/compiler/InitializeGLPosition.cpp \
 	third_party/angle_dx11/src/compiler/InitializeParseContext.cpp \
 	third_party/angle_dx11/src/compiler/Intermediate.cpp \
 	third_party/angle_dx11/src/compiler/intermOut.cpp \
