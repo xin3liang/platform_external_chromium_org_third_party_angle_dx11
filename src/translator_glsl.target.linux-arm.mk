@@ -70,6 +70,7 @@ MY_CFLAGS_Debug := \
 
 MY_DEFS_Debug := \
 	'-DANGLE_DX11' \
+	'-DWTF_VECTOR_INITIAL_SIZE=16' \
 	'-DANGLE_DISABLE_TRACE' \
 	'-DANGLE_COMPILE_OPTIMIZATION_LEVEL=D3DCOMPILE_OPTIMIZATION_LEVEL1' \
 	'-DANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ TEXT("d3dcompiler_46.dll"), TEXT("d3dcompiler_43.dll") }' \
@@ -85,6 +86,7 @@ MY_DEFS_Debug := \
 	'-DENABLE_GPU=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DENABLE_EGLIMAGE=1' \
+	'-DCLD_VERSION=1' \
 	'-DCOMPILER_IMPLEMENTATION' \
 	'-DANDROID' \
 	'-D__GNU_SOURCE=1' \
@@ -156,6 +158,7 @@ MY_CFLAGS_Release := \
 
 MY_DEFS_Release := \
 	'-DANGLE_DX11' \
+	'-DWTF_VECTOR_INITIAL_SIZE=16' \
 	'-DANGLE_DISABLE_TRACE' \
 	'-DANGLE_COMPILE_OPTIMIZATION_LEVEL=D3DCOMPILE_OPTIMIZATION_LEVEL1' \
 	'-DANGLE_PRELOADED_D3DCOMPILER_MODULE_NAMES={ TEXT("d3dcompiler_46.dll"), TEXT("d3dcompiler_43.dll") }' \
@@ -171,6 +174,7 @@ MY_DEFS_Release := \
 	'-DENABLE_GPU=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DENABLE_EGLIMAGE=1' \
+	'-DCLD_VERSION=1' \
 	'-DCOMPILER_IMPLEMENTATION' \
 	'-DANDROID' \
 	'-D__GNU_SOURCE=1' \
@@ -221,7 +225,9 @@ LOCAL_LDFLAGS_Debug := \
 	-Wl,--no-undefined \
 	-Wl,--exclude-libs=ALL \
 	-Wl,--icf=safe \
+	-Wl,--fatal-warnings \
 	-Wl,--gc-sections \
+	-Wl,--warn-shared-textrel \
 	-Wl,-O1 \
 	-Wl,--as-needed
 
@@ -240,7 +246,9 @@ LOCAL_LDFLAGS_Release := \
 	-Wl,--icf=safe \
 	-Wl,-O1 \
 	-Wl,--as-needed \
-	-Wl,--gc-sections
+	-Wl,--gc-sections \
+	-Wl,--fatal-warnings \
+	-Wl,--warn-shared-textrel
 
 
 LOCAL_LDFLAGS := $(LOCAL_LDFLAGS_$(GYP_CONFIGURATION))
