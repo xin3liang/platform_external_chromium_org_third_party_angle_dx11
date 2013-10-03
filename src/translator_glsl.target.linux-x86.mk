@@ -22,14 +22,56 @@ LOCAL_GENERATED_SOURCES :=
 GYP_COPIED_SOURCE_ORIGIN_DIRS :=
 
 LOCAL_SRC_FILES := \
-	third_party/angle_dx11/src/compiler/CodeGenGLSL.cpp \
+	third_party/angle_dx11/src/compiler/BuiltInFunctionEmulator.cpp \
+	third_party/angle_dx11/src/compiler/CodeGen.cpp \
+	third_party/angle_dx11/src/compiler/Compiler.cpp \
+	third_party/angle_dx11/src/compiler/debug.cpp \
+	third_party/angle_dx11/src/compiler/DetectCallDepth.cpp \
+	third_party/angle_dx11/src/compiler/DetectDiscontinuity.cpp \
+	third_party/angle_dx11/src/compiler/Diagnostics.cpp \
+	third_party/angle_dx11/src/compiler/DirectiveHandler.cpp \
+	third_party/angle_dx11/src/compiler/ForLoopUnroll.cpp \
+	third_party/angle_dx11/src/compiler/glslang_lex.cpp \
+	third_party/angle_dx11/src/compiler/glslang_tab.cpp \
+	third_party/angle_dx11/src/compiler/InfoSink.cpp \
+	third_party/angle_dx11/src/compiler/Initialize.cpp \
+	third_party/angle_dx11/src/compiler/InitializeDll.cpp \
+	third_party/angle_dx11/src/compiler/InitializeGLPosition.cpp \
+	third_party/angle_dx11/src/compiler/InitializeParseContext.cpp \
+	third_party/angle_dx11/src/compiler/Intermediate.cpp \
+	third_party/angle_dx11/src/compiler/intermOut.cpp \
+	third_party/angle_dx11/src/compiler/IntermTraverse.cpp \
+	third_party/angle_dx11/src/compiler/MapLongVariableNames.cpp \
 	third_party/angle_dx11/src/compiler/OutputESSL.cpp \
 	third_party/angle_dx11/src/compiler/OutputGLSLBase.cpp \
 	third_party/angle_dx11/src/compiler/OutputGLSL.cpp \
+	third_party/angle_dx11/src/compiler/OutputHLSL.cpp \
+	third_party/angle_dx11/src/compiler/parseConst.cpp \
+	third_party/angle_dx11/src/compiler/ParseHelper.cpp \
+	third_party/angle_dx11/src/compiler/PoolAlloc.cpp \
+	third_party/angle_dx11/src/compiler/QualifierAlive.cpp \
+	third_party/angle_dx11/src/compiler/RemoveTree.cpp \
+	third_party/angle_dx11/src/compiler/SearchSymbol.cpp \
 	third_party/angle_dx11/src/compiler/ShaderLang.cpp \
+	third_party/angle_dx11/src/compiler/SymbolTable.cpp \
 	third_party/angle_dx11/src/compiler/TranslatorESSL.cpp \
 	third_party/angle_dx11/src/compiler/TranslatorGLSL.cpp \
-	third_party/angle_dx11/src/compiler/VersionGLSL.cpp
+	third_party/angle_dx11/src/compiler/TranslatorHLSL.cpp \
+	third_party/angle_dx11/src/compiler/UnfoldShortCircuit.cpp \
+	third_party/angle_dx11/src/compiler/Uniform.cpp \
+	third_party/angle_dx11/src/compiler/util.cpp \
+	third_party/angle_dx11/src/compiler/ValidateLimitations.cpp \
+	third_party/angle_dx11/src/compiler/VariableInfo.cpp \
+	third_party/angle_dx11/src/compiler/VariablePacker.cpp \
+	third_party/angle_dx11/src/compiler/VersionGLSL.cpp \
+	third_party/angle_dx11/src/compiler/depgraph/DependencyGraph.cpp \
+	third_party/angle_dx11/src/compiler/depgraph/DependencyGraphBuilder.cpp \
+	third_party/angle_dx11/src/compiler/depgraph/DependencyGraphOutput.cpp \
+	third_party/angle_dx11/src/compiler/depgraph/DependencyGraphTraverse.cpp \
+	third_party/angle_dx11/src/compiler/timing/RestrictFragmentShaderTiming.cpp \
+	third_party/angle_dx11/src/compiler/timing/RestrictVertexShaderTiming.cpp \
+	third_party/angle_dx11/src/third_party/compiler/ArrayBoundsClamper.cpp \
+	third_party/angle_dx11/src/compiler/ossource_posix.cpp
 
 
 # Flags passed to both C and C++ files.
