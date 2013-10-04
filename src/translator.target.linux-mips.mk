@@ -3,7 +3,7 @@
 include $(CLEAR_VARS)
 
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
-LOCAL_MODULE := third_party_angle_dx11_src_translator_glsl_gyp
+LOCAL_MODULE := third_party_angle_dx11_src_translator_gyp
 LOCAL_MODULE_SUFFIX := .a
 LOCAL_MODULE_TAGS := optional
 gyp_intermediate_dir := $(call local-intermediates-dir)
@@ -78,6 +78,7 @@ LOCAL_SRC_FILES := \
 MY_CFLAGS_Debug := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
+	 \
 	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
@@ -86,9 +87,8 @@ MY_CFLAGS_Debug := \
 	-pipe \
 	-fPIC \
 	-Wno-format \
-	-fno-tree-sra \
-	-fuse-ld=gold \
-	-Wno-psabi \
+	-EL \
+	-mhard-float \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -153,7 +153,7 @@ LOCAL_CPPFLAGS_Debug := \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
-	-Wno-abi \
+	-Wno-uninitialized \
 	-Wno-error=c++0x-compat \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
@@ -164,6 +164,7 @@ LOCAL_CPPFLAGS_Debug := \
 MY_CFLAGS_Release := \
 	-fstack-protector \
 	--param=ssp-buffer-size=4 \
+	 \
 	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
@@ -172,9 +173,8 @@ MY_CFLAGS_Release := \
 	-pipe \
 	-fPIC \
 	-Wno-format \
-	-fno-tree-sra \
-	-fuse-ld=gold \
-	-Wno-psabi \
+	-EL \
+	-mhard-float \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -239,7 +239,7 @@ LOCAL_CPPFLAGS_Release := \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
-	-Wno-abi \
+	-Wno-uninitialized \
 	-Wno-error=c++0x-compat \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
@@ -256,13 +256,11 @@ LOCAL_LDFLAGS_Debug := \
 	-Wl,-z,relro \
 	-Wl,-z,noexecstack \
 	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
+	-EL \
+	-Wl,--no-keep-memory \
 	-nostdlib \
 	-Wl,--no-undefined \
 	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
 	-Wl,--fatal-warnings \
 	-Wl,--gc-sections \
 	-Wl,--warn-shared-textrel \
@@ -275,13 +273,11 @@ LOCAL_LDFLAGS_Release := \
 	-Wl,-z,relro \
 	-Wl,-z,noexecstack \
 	-fPIC \
-	-Wl,-z,relro \
-	-Wl,-z,now \
-	-fuse-ld=gold \
+	-EL \
+	-Wl,--no-keep-memory \
 	-nostdlib \
 	-Wl,--no-undefined \
 	-Wl,--exclude-libs=ALL \
-	-Wl,--icf=safe \
 	-Wl,-O1 \
 	-Wl,--as-needed \
 	-Wl,--gc-sections \
@@ -302,10 +298,10 @@ LOCAL_SHARED_LIBRARIES := \
 
 # Add target alias to "gyp_all_modules" target.
 .PHONY: gyp_all_modules
-gyp_all_modules: third_party_angle_dx11_src_translator_glsl_gyp
+gyp_all_modules: third_party_angle_dx11_src_translator_gyp
 
 # Alias gyp target name.
-.PHONY: translator_glsl
-translator_glsl: third_party_angle_dx11_src_translator_glsl_gyp
+.PHONY: translator
+translator: third_party_angle_dx11_src_translator_gyp
 
 include $(BUILD_STATIC_LIBRARY)
