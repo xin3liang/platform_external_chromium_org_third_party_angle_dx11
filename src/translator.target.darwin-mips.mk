@@ -3,7 +3,7 @@
 include $(CLEAR_VARS)
 
 LOCAL_MODULE_CLASS := STATIC_LIBRARIES
-LOCAL_MODULE := third_party_angle_dx11_src_translator_common_gyp
+LOCAL_MODULE := third_party_angle_dx11_src_translator_gyp
 LOCAL_MODULE_SUFFIX := .a
 LOCAL_MODULE_TAGS := optional
 gyp_intermediate_dir := $(call local-intermediates-dir)
@@ -23,9 +23,11 @@ GYP_COPIED_SOURCE_ORIGIN_DIRS :=
 
 LOCAL_SRC_FILES := \
 	third_party/angle_dx11/src/compiler/BuiltInFunctionEmulator.cpp \
+	third_party/angle_dx11/src/compiler/CodeGen.cpp \
 	third_party/angle_dx11/src/compiler/Compiler.cpp \
 	third_party/angle_dx11/src/compiler/debug.cpp \
 	third_party/angle_dx11/src/compiler/DetectCallDepth.cpp \
+	third_party/angle_dx11/src/compiler/DetectDiscontinuity.cpp \
 	third_party/angle_dx11/src/compiler/Diagnostics.cpp \
 	third_party/angle_dx11/src/compiler/DirectiveHandler.cpp \
 	third_party/angle_dx11/src/compiler/ForLoopUnroll.cpp \
@@ -40,17 +42,28 @@ LOCAL_SRC_FILES := \
 	third_party/angle_dx11/src/compiler/intermOut.cpp \
 	third_party/angle_dx11/src/compiler/IntermTraverse.cpp \
 	third_party/angle_dx11/src/compiler/MapLongVariableNames.cpp \
+	third_party/angle_dx11/src/compiler/OutputESSL.cpp \
+	third_party/angle_dx11/src/compiler/OutputGLSLBase.cpp \
+	third_party/angle_dx11/src/compiler/OutputGLSL.cpp \
+	third_party/angle_dx11/src/compiler/OutputHLSL.cpp \
 	third_party/angle_dx11/src/compiler/parseConst.cpp \
 	third_party/angle_dx11/src/compiler/ParseHelper.cpp \
 	third_party/angle_dx11/src/compiler/PoolAlloc.cpp \
 	third_party/angle_dx11/src/compiler/QualifierAlive.cpp \
 	third_party/angle_dx11/src/compiler/RemoveTree.cpp \
+	third_party/angle_dx11/src/compiler/SearchSymbol.cpp \
+	third_party/angle_dx11/src/compiler/ShaderLang.cpp \
 	third_party/angle_dx11/src/compiler/SymbolTable.cpp \
+	third_party/angle_dx11/src/compiler/TranslatorESSL.cpp \
+	third_party/angle_dx11/src/compiler/TranslatorGLSL.cpp \
+	third_party/angle_dx11/src/compiler/TranslatorHLSL.cpp \
+	third_party/angle_dx11/src/compiler/UnfoldShortCircuit.cpp \
 	third_party/angle_dx11/src/compiler/Uniform.cpp \
 	third_party/angle_dx11/src/compiler/util.cpp \
 	third_party/angle_dx11/src/compiler/ValidateLimitations.cpp \
 	third_party/angle_dx11/src/compiler/VariableInfo.cpp \
 	third_party/angle_dx11/src/compiler/VariablePacker.cpp \
+	third_party/angle_dx11/src/compiler/VersionGLSL.cpp \
 	third_party/angle_dx11/src/compiler/depgraph/DependencyGraph.cpp \
 	third_party/angle_dx11/src/compiler/depgraph/DependencyGraphBuilder.cpp \
 	third_party/angle_dx11/src/compiler/depgraph/DependencyGraphOutput.cpp \
@@ -63,7 +76,9 @@ LOCAL_SRC_FILES := \
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Debug := \
+	-fstack-protector \
 	--param=ssp-buffer-size=4 \
+	 \
 	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
@@ -72,15 +87,12 @@ MY_CFLAGS_Debug := \
 	-pipe \
 	-fPIC \
 	-Wno-format \
-	-m32 \
-	-mmmx \
-	-march=pentium4 \
-	-msse2 \
-	-mfpmath=sse \
-	-fuse-ld=gold \
+	-EL \
+	-mhard-float \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
+	-fstack-protector \
 	-fno-short-enums \
 	-finline-limit=64 \
 	-Wa,--noexecstack \
@@ -92,7 +104,6 @@ MY_CFLAGS_Debug := \
 	-Wno-format-security \
 	-Wno-return-type \
 	-Wno-sequence-point \
-	-fno-stack-protector \
 	-Os \
 	-g \
 	-fomit-frame-pointer \
@@ -113,11 +124,10 @@ MY_DEFS_Debug := \
 	'-DUSE_LIBJPEG_TURBO=1' \
 	'-DUSE_PROPRIETARY_CODECS' \
 	'-DENABLE_CONFIGURATION_POLICY' \
-	'-DENABLE_GPU=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DENABLE_EGLIMAGE=1' \
 	'-DCLD_VERSION=1' \
-	'-DCOMPILER_IMPLEMENTATION' \
+	'-DANGLE_TRANSLATOR_IMPLEMENTATION' \
 	'-DANDROID' \
 	'-D__GNU_SOURCE=1' \
 	'-DUSE_STLPORT=1' \
@@ -143,6 +153,7 @@ LOCAL_CPPFLAGS_Debug := \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
+	-Wno-uninitialized \
 	-Wno-error=c++0x-compat \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
@@ -151,7 +162,9 @@ LOCAL_CPPFLAGS_Debug := \
 
 # Flags passed to both C and C++ files.
 MY_CFLAGS_Release := \
+	-fstack-protector \
 	--param=ssp-buffer-size=4 \
+	 \
 	-fno-exceptions \
 	-fno-strict-aliasing \
 	-Wno-unused-parameter \
@@ -160,15 +173,12 @@ MY_CFLAGS_Release := \
 	-pipe \
 	-fPIC \
 	-Wno-format \
-	-m32 \
-	-mmmx \
-	-march=pentium4 \
-	-msse2 \
-	-mfpmath=sse \
-	-fuse-ld=gold \
+	-EL \
+	-mhard-float \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
+	-fstack-protector \
 	-fno-short-enums \
 	-finline-limit=64 \
 	-Wa,--noexecstack \
@@ -180,14 +190,11 @@ MY_CFLAGS_Release := \
 	-Wno-format-security \
 	-Wno-return-type \
 	-Wno-sequence-point \
-	-fno-stack-protector \
 	-Os \
 	-fno-ident \
 	-fdata-sections \
 	-ffunction-sections \
-	-fomit-frame-pointer \
-	-fno-unwind-tables \
-	-fno-asynchronous-unwind-tables
+	-fomit-frame-pointer
 
 MY_DEFS_Release := \
 	'-DANGLE_DX11' \
@@ -203,11 +210,10 @@ MY_DEFS_Release := \
 	'-DUSE_LIBJPEG_TURBO=1' \
 	'-DUSE_PROPRIETARY_CODECS' \
 	'-DENABLE_CONFIGURATION_POLICY' \
-	'-DENABLE_GPU=1' \
 	'-DUSE_OPENSSL=1' \
 	'-DENABLE_EGLIMAGE=1' \
 	'-DCLD_VERSION=1' \
-	'-DCOMPILER_IMPLEMENTATION' \
+	'-DANGLE_TRANSLATOR_IMPLEMENTATION' \
 	'-DANDROID' \
 	'-D__GNU_SOURCE=1' \
 	'-DUSE_STLPORT=1' \
@@ -233,6 +239,7 @@ LOCAL_CPPFLAGS_Release := \
 	-fno-threadsafe-statics \
 	-fvisibility-inlines-hidden \
 	-Wno-deprecated \
+	-Wno-uninitialized \
 	-Wno-error=c++0x-compat \
 	-Wno-non-virtual-dtor \
 	-Wno-sign-promo \
@@ -249,8 +256,8 @@ LOCAL_LDFLAGS_Debug := \
 	-Wl,-z,relro \
 	-Wl,-z,noexecstack \
 	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
+	-EL \
+	-Wl,--no-keep-memory \
 	-nostdlib \
 	-Wl,--no-undefined \
 	-Wl,--exclude-libs=ALL \
@@ -266,8 +273,8 @@ LOCAL_LDFLAGS_Release := \
 	-Wl,-z,relro \
 	-Wl,-z,noexecstack \
 	-fPIC \
-	-m32 \
-	-fuse-ld=gold \
+	-EL \
+	-Wl,--no-keep-memory \
 	-nostdlib \
 	-Wl,--no-undefined \
 	-Wl,--exclude-libs=ALL \
@@ -291,10 +298,10 @@ LOCAL_SHARED_LIBRARIES := \
 
 # Add target alias to "gyp_all_modules" target.
 .PHONY: gyp_all_modules
-gyp_all_modules: third_party_angle_dx11_src_translator_common_gyp
+gyp_all_modules: third_party_angle_dx11_src_translator_gyp
 
 # Alias gyp target name.
-.PHONY: translator_common
-translator_common: third_party_angle_dx11_src_translator_common_gyp
+.PHONY: translator
+translator: third_party_angle_dx11_src_translator_gyp
 
 include $(BUILD_STATIC_LIBRARY)
