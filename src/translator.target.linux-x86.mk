@@ -57,6 +57,7 @@ LOCAL_SRC_FILES := \
 	third_party/angle_dx11/src/compiler/TranslatorESSL.cpp \
 	third_party/angle_dx11/src/compiler/TranslatorGLSL.cpp \
 	third_party/angle_dx11/src/compiler/TranslatorHLSL.cpp \
+	third_party/angle_dx11/src/compiler/UnfoldShortCircuitAST.cpp \
 	third_party/angle_dx11/src/compiler/UnfoldShortCircuit.cpp \
 	third_party/angle_dx11/src/compiler/Uniform.cpp \
 	third_party/angle_dx11/src/compiler/util.cpp \
