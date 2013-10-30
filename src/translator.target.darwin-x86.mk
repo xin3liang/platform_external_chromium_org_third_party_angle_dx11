@@ -47,7 +47,7 @@ LOCAL_SRC_FILES := \
 	third_party/angle_dx11/src/compiler/OutputGLSL.cpp \
 	third_party/angle_dx11/src/compiler/OutputHLSL.cpp \
 	third_party/angle_dx11/src/compiler/parseConst.cpp \
-	third_party/angle_dx11/src/compiler/ParseHelper.cpp \
+	third_party/angle_dx11/src/compiler/ParseContext.cpp \
 	third_party/angle_dx11/src/compiler/PoolAlloc.cpp \
 	third_party/angle_dx11/src/compiler/QualifierAlive.cpp \
 	third_party/angle_dx11/src/compiler/RemoveTree.cpp \
