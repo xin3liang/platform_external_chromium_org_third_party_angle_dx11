@@ -252,6 +252,8 @@ public:
     TIntermTyped(const TType& t) : type(t)  { }
     virtual TIntermTyped* getAsTyped() { return this; }
 
+    virtual bool hasSideEffects() const = 0;
+
     void setType(const TType& t) { type = t; }
     const TType& getType() const { return type; }
     TType* getTypePointer() { return &type; }
@@ -354,6 +356,8 @@ public:
     TIntermSymbol(int i, const TString& sym, const TType& t) : 
             TIntermTyped(t), id(i)  { symbol = sym; originalSymbol = sym; } 
 
+    virtual bool hasSideEffects() const { return false; }
+
     int getId() const { return id; }
     const TString& getSymbol() const { return symbol; }
 
@@ -376,11 +380,13 @@ class TIntermConstantUnion : public TIntermTyped {
 public:
     TIntermConstantUnion(ConstantUnion *unionPointer, const TType& t) : TIntermTyped(t), unionArrayPointer(unionPointer) { }
 
+    virtual bool hasSideEffects() const { return false; }
+
     ConstantUnion* getUnionArrayPointer() const { return unionArrayPointer; }
     
-    int getIConst(int index) const { return unionArrayPointer ? unionArrayPointer[index].getIConst() : 0; }
-    float getFConst(int index) const { return unionArrayPointer ? unionArrayPointer[index].getFConst() : 0.0f; }
-    bool getBConst(int index) const { return unionArrayPointer ? unionArrayPointer[index].getBConst() : false; }
+    int getIConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getIConst() : 0; }
+    float getFConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getFConst() : 0.0f; }
+    bool getBConst(size_t index) const { return unionArrayPointer ? unionArrayPointer[index].getBConst() : false; }
 
     virtual TIntermConstantUnion* getAsConstantUnion()  { return this; }
     virtual void traverse(TIntermTraverser*);
@@ -400,8 +406,10 @@ public:
     TOperator getOp() const { return op; }
     void setOp(TOperator o) { op = o; }
 
-    bool modifiesState() const;
+    bool isAssignment() const;
     bool isConstructor() const;
+
+    virtual bool hasSideEffects() const { return isAssignment(); }
 
 protected:
     TIntermOperator(TOperator o) : TIntermTyped(TType(EbtFloat, EbpUndefined)), op(o) {}
@@ -420,6 +428,8 @@ public:
     virtual void traverse(TIntermTraverser*);
     virtual bool replaceChildNode(
         TIntermNode *original, TIntermNode *replacement);
+
+    virtual bool hasSideEffects() const { return (isAssignment() || left->hasSideEffects() || right->hasSideEffects()); }
 
     void setLeft(TIntermTyped* n) { left = n; }
     void setRight(TIntermTyped* n) { right = n; }
@@ -450,6 +460,8 @@ public:
     virtual TIntermUnary* getAsUnaryNode() { return this; }
     virtual bool replaceChildNode(
         TIntermNode *original, TIntermNode *replacement);
+
+    virtual bool hasSideEffects() const { return (isAssignment() || operand->hasSideEffects()); }
 
     void setOperand(TIntermTyped* o) { operand = o; }
     TIntermTyped* getOperand() { return operand; }    
@@ -482,6 +494,9 @@ public:
     virtual void traverse(TIntermTraverser*);
     virtual bool replaceChildNode(
         TIntermNode *original, TIntermNode *replacement);
+
+    // Conservatively assume function calls and other aggregate operators have side-effects
+    virtual bool hasSideEffects() const { return true; }
 
     TIntermSequence& getSequence() { return sequence; }
 
@@ -527,6 +542,9 @@ public:
     virtual void traverse(TIntermTraverser*);
     virtual bool replaceChildNode(
         TIntermNode *original, TIntermNode *replacement);
+
+    // Conservatively assume selections have side-effects
+    virtual bool hasSideEffects() const { return true; }
 
     bool usesTernaryOperator() const { return getBasicType() != EbtVoid; }
     TIntermNode* getCondition() const { return condition; }
